@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: invyra_platform_postgres
+    environment:
+      POSTGRES_USER: invyra
+      POSTGRES_PASSWORD: invyra
+      POSTGRES_DB: invyra_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - invyra_platform_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invyra -d invyra_platform"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  test_postgres:
+    image: postgres:16
+    container_name: invyra_platform_test_postgres
+    environment:
+      POSTGRES_USER: invyra
+      POSTGRES_PASSWORD: invyra
+      POSTGRES_DB: invyra_platform_test
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invyra -d invyra_platform_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  platform_api:
+    build: .
+    container_name: invyra_platform_api
+    env_file:
+      - .env.example
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: uvicorn invyra_platform.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+
+volumes:
+  invyra_platform_postgres_data:
