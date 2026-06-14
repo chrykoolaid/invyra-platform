@@ -6,6 +6,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from invyra_platform.audit import models as platform_event_models  # noqa: F401
+from invyra_platform.auth import models as auth_models  # noqa: F401
 from invyra_platform.core.config import get_settings
 from invyra_platform.db.base import Base
 from invyra_platform.organisations import models as tenant_models  # noqa: F401
