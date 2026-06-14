@@ -1,0 +1,1 @@
+"""Authentication data foundation module."""
