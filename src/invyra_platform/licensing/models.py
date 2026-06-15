@@ -15,8 +15,9 @@ class LicenseProduct(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """Commercial product or future module known to the platform."""
 
     __tablename__ = "license_products"
+    __table_args__ = (UniqueConstraint("product_code", name="uq_license_products_product_code"),)
 
-    product_code: Mapped[str] = mapped_column(String(120), nullable=False, unique=True, index=True)
+    product_code: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
     commercial_status: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
     launch_enabled: Mapped[str] = mapped_column(String(10), nullable=False, default="false")
