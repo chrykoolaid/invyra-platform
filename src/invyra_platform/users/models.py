@@ -15,8 +15,9 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """Global user identity record."""
 
     __tablename__ = "users"
+    __table_args__ = (UniqueConstraint("email", name="uq_users_email"),)
 
-    email: Mapped[str] = mapped_column(String(320), nullable=False, unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(320), nullable=False, index=True)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[str] = mapped_column(String(40), nullable=False, default="active", index=True)
 
@@ -80,8 +81,9 @@ class Permission(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """Atomic permission definition."""
 
     __tablename__ = "permissions"
+    __table_args__ = (UniqueConstraint("code", name="uq_permissions_code"),)
 
-    code: Mapped[str] = mapped_column(String(160), nullable=False, unique=True, index=True)
+    code: Mapped[str] = mapped_column(String(160), nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     roles: Mapped[list["RolePermission"]] = relationship(back_populates="permission")
