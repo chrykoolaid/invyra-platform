@@ -32,7 +32,7 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
-extend-ignore = ["E501"]
+extend-ignore = ["E501", "I001"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
