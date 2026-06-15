@@ -48,8 +48,9 @@ class PortalModuleRegistry(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """Module registry visible to portal runtime."""
 
     __tablename__ = "portal_module_registry"
+    __table_args__ = (UniqueConstraint("module_code", name="uq_portal_module_registry_module_code"),)
 
-    module_code: Mapped[str] = mapped_column(String(120), nullable=False, unique=True, index=True)
+    module_code: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
     commercial_status: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
     is_visible: Mapped[str] = mapped_column(String(10), nullable=False, default="false")
