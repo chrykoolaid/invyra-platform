@@ -1,6 +1,6 @@
 """Audit SQLAlchemy models."""
 
-from typing import TYPE_CHECKING, Any
+from typing import Any, TYPE_CHECKING
 from uuid import UUID
 
 from sqlalchemy import ForeignKey, Index, String, Text
@@ -19,7 +19,12 @@ class AuditEvent(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     __tablename__ = "audit_events"
     __table_args__ = (
-        Index("ix_audit_events_org_category_created", "organisation_id", "event_category", "created_at"),
+        Index(
+            "ix_audit_events_org_category_created",
+            "organisation_id",
+            "event_category",
+            "created_at",
+        ),
     )
 
     organisation_id: Mapped[UUID | None] = mapped_column(
