@@ -4,7 +4,9 @@ from fastapi import APIRouter
 
 from invyra_platform.api.v1.auth import router as auth_router
 from invyra_platform.api.v1.health import router as health_router
+from invyra_platform.api.v1.inventory_access import router as inventory_access_router
 
 router = APIRouter()
 router.include_router(health_router, tags=["health"])
 router.include_router(auth_router)
+router.include_router(inventory_access_router)
