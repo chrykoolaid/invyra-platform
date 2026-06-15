@@ -13,6 +13,7 @@ from invyra_platform.devices import models as device_models  # noqa: F401
 from invyra_platform.environments import models as environment_models  # noqa: F401
 from invyra_platform.licensing import models as licensing_models  # noqa: F401
 from invyra_platform.organisations import models as tenant_models  # noqa: F401
+from invyra_platform.portal import models as portal_models  # noqa: F401
 from invyra_platform.users import models as access_models  # noqa: F401
 
 config = context.config
