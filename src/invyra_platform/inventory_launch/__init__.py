@@ -1,0 +1,1 @@
+"""Inventory launch foundation package."""
