@@ -7,7 +7,7 @@ from invyra_platform.core.constants import (
     FUTURE_MODULE_CODES,
     SUPPORTED_ENVIRONMENT_CODES,
 )
-from invyra_platform.db.mixins import UUIDPrimaryKeyMixin
+from invyra_platform.organisations.models import Organisation
 from invyra_platform.shared.enums import CommercialStatus, EnvironmentCode
 
 
@@ -36,6 +36,6 @@ def test_commercial_status_values_are_locked() -> None:
 
 
 def test_uuid_primary_key_default_generates_uuid() -> None:
-    column = UUIDPrimaryKeyMixin.__dict__["id"]
+    column = Organisation.__table__.columns["id"]
     generated = column.default.arg()
     assert isinstance(generated, UUID)
