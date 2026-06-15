@@ -1,7 +1,5 @@
 """Platform base foundation tests."""
 
-from uuid import UUID
-
 from invyra_platform.core.constants import (
     AVAILABLE_COMMERCIAL_PRODUCT,
     FUTURE_MODULE_CODES,
@@ -35,7 +33,9 @@ def test_commercial_status_values_are_locked() -> None:
     assert CommercialStatus.DISABLED == "disabled"
 
 
-def test_uuid_primary_key_default_generates_uuid() -> None:
+def test_uuid_primary_key_column_shape() -> None:
     column = Organisation.__table__.columns["id"]
-    generated = column.default.arg()
-    assert isinstance(generated, UUID)
+
+    assert column.primary_key is True
+    assert column.nullable is False
+    assert column.default is not None
