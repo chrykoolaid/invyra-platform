@@ -11,6 +11,7 @@ from invyra_platform.core.config import get_settings
 from invyra_platform.db.base import Base
 from invyra_platform.devices import models as device_models  # noqa: F401
 from invyra_platform.environments import models as environment_models  # noqa: F401
+from invyra_platform.inventory_access import models as inventory_access_models  # noqa: F401
 from invyra_platform.inventory_launch import models as inventory_launch_models  # noqa: F401
 from invyra_platform.licensing import models as licensing_models  # noqa: F401
 from invyra_platform.organisations import models as tenant_models  # noqa: F401
