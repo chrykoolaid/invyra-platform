@@ -86,7 +86,8 @@ class PortalNavigationItemDTO(PortalContractDTO):
         if self.enabled and self.target_key is None:
             raise ValueError("Enabled items require a target key.")
 
-        if self.module_code in FUTURE_MODULE_CODES and self.enabled:
+        is_future_module = self.module_code is not None and self.module_code in FUTURE_MODULE_CODES
+        if is_future_module and self.enabled:
             raise ValueError("Future module items cannot be enabled.")
 
         blocked_status = self.commercial_status not in {None, PortalCommercialStatus.AVAILABLE}
