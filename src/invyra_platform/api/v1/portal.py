@@ -4,15 +4,17 @@ from fastapi import APIRouter
 
 from invyra_platform.api.adapters import map_service_result_to_api_response
 from invyra_platform.api.contracts import ApiResponse
-from invyra_platform.core.service_results import ServiceResult
-from invyra_platform.portal.entitlement_contracts import PortalEntitlementRequest, PortalEntitlementResponse
-from invyra_platform.portal.inventory_entry_contracts import (
-    PortalInventoryEntryDTO,
-    PortalInventoryEntryRequest,
-    PortalInventoryEntryResponse,
+from invyra_platform.api.v1.portal_adapters import (
+    build_portal_entitlement_result,
+    build_portal_inventory_entry_result,
+    build_portal_navigation_result,
+    build_portal_session_result,
+    build_portal_status_result,
 )
-from invyra_platform.portal.navigation_contracts import PortalNavigationRequest, PortalNavigationResponse
-from invyra_platform.portal.session_contracts import PortalSessionRequest, PortalSessionResponse
+from invyra_platform.portal.entitlement_contracts import PortalEntitlementRequest
+from invyra_platform.portal.inventory_entry_contracts import PortalInventoryEntryRequest
+from invyra_platform.portal.navigation_contracts import PortalNavigationRequest
+from invyra_platform.portal.session_contracts import PortalSessionRequest
 
 router = APIRouter(prefix="/portal", tags=["portal"])
 
@@ -21,13 +23,7 @@ router = APIRouter(prefix="/portal", tags=["portal"])
 def portal_status() -> ApiResponse:
     """Future Portal API boundary status."""
     return map_service_result_to_api_response(
-        ServiceResult.not_implemented(
-            data={
-                "boundary": "portal-api",
-                "runtime": "not-implemented",
-                "routes": [],
-            }
-        ),
+        build_portal_status_result(),
         message="Portal API boundary skeleton only.",
     )
 
@@ -35,15 +31,8 @@ def portal_status() -> ApiResponse:
 @router.post("/session", response_model=ApiResponse)
 def portal_session(request: PortalSessionRequest) -> ApiResponse:
     """Future Portal current-session boundary."""
-    response = PortalSessionResponse(
-        authenticated=False,
-        session=None,
-        context=None,
-        message="Portal session boundary skeleton only.",
-    )
-
     return map_service_result_to_api_response(
-        ServiceResult.not_implemented(data=response.model_dump(mode="json")),
+        build_portal_session_result(request),
         message="Portal session boundary skeleton only.",
         trace_id=request.trace_id,
     )
@@ -52,14 +41,8 @@ def portal_session(request: PortalSessionRequest) -> ApiResponse:
 @router.post("/navigation", response_model=ApiResponse)
 def portal_navigation(request: PortalNavigationRequest) -> ApiResponse:
     """Future Portal navigation boundary."""
-    response = PortalNavigationResponse(
-        environment=request.environment,
-        sections=[],
-        message="Portal navigation boundary skeleton only.",
-    )
-
     return map_service_result_to_api_response(
-        ServiceResult.not_implemented(data=response.model_dump(mode="json")),
+        build_portal_navigation_result(request),
         message="Portal navigation boundary skeleton only.",
         trace_id=request.trace_id,
     )
@@ -68,14 +51,8 @@ def portal_navigation(request: PortalNavigationRequest) -> ApiResponse:
 @router.post("/entitlements", response_model=ApiResponse)
 def portal_entitlements(request: PortalEntitlementRequest) -> ApiResponse:
     """Future Portal entitlement boundary."""
-    response = PortalEntitlementResponse(
-        environment=request.environment,
-        groups=[],
-        message="Portal entitlement boundary skeleton only.",
-    )
-
     return map_service_result_to_api_response(
-        ServiceResult.not_implemented(data=response.model_dump(mode="json")),
+        build_portal_entitlement_result(request),
         message="Portal entitlement boundary skeleton only.",
         trace_id=request.trace_id,
     )
@@ -84,20 +61,8 @@ def portal_entitlements(request: PortalEntitlementRequest) -> ApiResponse:
 @router.post("/inventory-entry", response_model=ApiResponse)
 def portal_inventory_entry(request: PortalInventoryEntryRequest) -> ApiResponse:
     """Future Portal Inventory entry boundary."""
-    response = PortalInventoryEntryResponse(
-        environment=request.environment,
-        entry=PortalInventoryEntryDTO(
-            environment=request.environment,
-            visible=False,
-            enabled=False,
-            entry_allowed=False,
-            reason="Portal Inventory entry skeleton only.",
-        ),
-        message="Portal Inventory entry boundary skeleton only.",
-    )
-
     return map_service_result_to_api_response(
-        ServiceResult.not_implemented(data=response.model_dump(mode="json")),
+        build_portal_inventory_entry_result(request),
         message="Portal Inventory entry boundary skeleton only.",
         trace_id=request.trace_id,
     )
