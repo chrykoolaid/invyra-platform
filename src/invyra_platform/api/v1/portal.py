@@ -6,6 +6,11 @@ from invyra_platform.api.adapters import map_service_result_to_api_response
 from invyra_platform.api.contracts import ApiResponse
 from invyra_platform.core.service_results import ServiceResult
 from invyra_platform.portal.entitlement_contracts import PortalEntitlementRequest, PortalEntitlementResponse
+from invyra_platform.portal.inventory_entry_contracts import (
+    PortalInventoryEntryDTO,
+    PortalInventoryEntryRequest,
+    PortalInventoryEntryResponse,
+)
 from invyra_platform.portal.navigation_contracts import PortalNavigationRequest, PortalNavigationResponse
 from invyra_platform.portal.session_contracts import PortalSessionRequest, PortalSessionResponse
 
@@ -72,5 +77,27 @@ def portal_entitlements(request: PortalEntitlementRequest) -> ApiResponse:
     return map_service_result_to_api_response(
         ServiceResult.not_implemented(data=response.model_dump(mode="json")),
         message="Portal entitlement boundary skeleton only.",
+        trace_id=request.trace_id,
+    )
+
+
+@router.post("/inventory-entry", response_model=ApiResponse)
+def portal_inventory_entry(request: PortalInventoryEntryRequest) -> ApiResponse:
+    """Future Portal Inventory entry boundary."""
+    response = PortalInventoryEntryResponse(
+        environment=request.environment,
+        entry=PortalInventoryEntryDTO(
+            environment=request.environment,
+            visible=False,
+            enabled=False,
+            entry_allowed=False,
+            reason="Portal Inventory entry skeleton only.",
+        ),
+        message="Portal Inventory entry boundary skeleton only.",
+    )
+
+    return map_service_result_to_api_response(
+        ServiceResult.not_implemented(data=response.model_dump(mode="json")),
+        message="Portal Inventory entry boundary skeleton only.",
         trace_id=request.trace_id,
     )
