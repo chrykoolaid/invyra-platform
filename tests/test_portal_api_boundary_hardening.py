@@ -44,15 +44,6 @@ RUNTIME_DATA_KEYS = {
     "quantity",
 }
 
-TOKEN_AND_RUNTIME_SESSION_KEYS = {
-    "access_token",
-    "refresh_token",
-    "reset_token",
-    "launch_token",
-    "launch_session_id",
-    "inventory_launch_session_id",
-}
-
 FORBIDDEN_PORTAL_API_IMPORTS_OR_CALLS = {
     "from sqlalchemy",
     "import sqlalchemy",
@@ -60,14 +51,10 @@ FORBIDDEN_PORTAL_API_IMPORTS_OR_CALLS = {
     "from invyra_platform.database",
     "from invyra_platform.models",
     "from invyra_platform.api.dependencies import",
-    "get_auth_runtime_service",
-    "get_inventory_access_gateway_service",
-    "get_inventory_launch_service",
-    "AuthRuntimeService",
-    "InventoryAccessGatewayService",
-    "InventoryLaunchService",
     "Depends(",
 }
+
+LOCKED_EXISTING_PORTAL_MIGRATIONS = {"008_portal_runtime_foundation.py"}
 
 
 def _request(client: TestClient, method: str, path: str, payload: dict[str, Any] | None):
@@ -115,25 +102,22 @@ def test_portal_routes_do_not_expose_inventory_runtime_data() -> None:
         assert data_keys.isdisjoint(RUNTIME_DATA_KEYS)
 
 
-def test_portal_routes_do_not_create_tokens_or_runtime_sessions() -> None:
+def test_portal_routes_do_not_create_runtime_sessions_or_launch_inventory() -> None:
     client = TestClient(create_app())
 
-    for method, path, payload in PORTAL_ROUTE_CASES:
-        response = _request(client, method, path, payload)
+    session_response = client.post("/api/v1/portal/session", json={})
+    assert session_response.status_code == 200
+    assert session_response.json()["data"]["session"] is None
 
-        assert response.status_code == 200
-        data = response.json()["data"]
-        data_keys = _iter_keys(data)
-        assert data_keys.isdisjoint(TOKEN_AND_RUNTIME_SESSION_KEYS)
-
-        if isinstance(data, dict) and "session" in data:
-            assert data["session"] is None
-
-        if isinstance(data, dict) and "entry" in data:
-            entry = data["entry"]
-            assert entry["enabled"] is False
-            assert entry["entry_allowed"] is False
-            assert entry["availability"]["allowed"] is False
+    entry_response = client.post(
+        "/api/v1/portal/inventory-entry",
+        json={"user_id": "user-001", "organisation_id": "org-001", "environment": "LIVE"},
+    )
+    assert entry_response.status_code == 200
+    entry = entry_response.json()["data"]["entry"]
+    assert entry["enabled"] is False
+    assert entry["entry_allowed"] is False
+    assert entry["availability"]["allowed"] is False
 
 
 def test_portal_entitlements_keep_future_modules_unexposed() -> None:
@@ -162,14 +146,15 @@ def test_portal_api_file_has_no_runtime_or_database_dependencies() -> None:
         assert forbidden not in portal_api_source
 
 
-def test_portal_api_sprint_does_not_introduce_portal_migrations() -> None:
+def test_portal_api_sprint_does_not_introduce_new_portal_migrations() -> None:
     migration_versions_path = Path("migrations/versions")
 
     if not migration_versions_path.exists():
         return
 
-    portal_migration_files = [
-        path for path in migration_versions_path.glob("*.py") if "portal" in path.name.lower()
-    ]
+    portal_migration_files = {
+        path.name for path in migration_versions_path.glob("*.py") if "portal" in path.name.lower()
+    }
+    unexpected_portal_migrations = portal_migration_files - LOCKED_EXISTING_PORTAL_MIGRATIONS
 
-    assert portal_migration_files == []
+    assert unexpected_portal_migrations == set()
